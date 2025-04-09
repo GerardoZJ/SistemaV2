@@ -9,6 +9,7 @@ export const AgregarLibro = () => {
   const [autor, setAutor] = useState('');
   const [cantidad, setCantidad] = useState(1);
   const [imagen, setImagen] = useState(null);
+  const [imagenPreview, setImagenPreview] = useState(null); // Variable para la vista previa
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -40,6 +41,7 @@ export const AgregarLibro = () => {
         setAutor('');
         setCantidad(1);
         setImagen(null);
+        setImagenPreview(null); // Resetear la vista previa
         navigate('/AdminIndex');
       } else {
         alert('Error al agregar el libro');
@@ -47,6 +49,15 @@ export const AgregarLibro = () => {
     } catch (error) {
       console.error('Error al agregar el libro:', error);
       alert('No se pudo conectar con el servidor. Por favor, intenta nuevamente.');
+    }
+  };
+
+  // Función para manejar el cambio de imagen y mostrar la vista previa
+  const handleImagenChange = (e) => {
+    const file = e.target.files[0];
+    setImagen(file);
+    if (file) {
+      setImagenPreview(URL.createObjectURL(file)); // Crear una URL para la vista previa
     }
   };
 
@@ -105,8 +116,9 @@ export const AgregarLibro = () => {
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => setImagen(e.target.files[0])}
+            onChange={handleImagenChange}
           />
+          {imagenPreview && <img src={imagenPreview} alt="Vista previa" style={{ width: '100px', marginTop: '10px' }} />}
         </div>
         <motion.button
           type="submit"

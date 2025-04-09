@@ -11,7 +11,6 @@ export const Navbar = () => {
 
   const commonLinks = [
     { path: "/", label: "Inicio" },
-    { path: "/SolicitarPrestamo", label: "Solicitar préstamo" },
     { path: "/DevolverLibro", label: "Devolver libro" },
     { path: "/Historial", label: "Historial" },
   ];

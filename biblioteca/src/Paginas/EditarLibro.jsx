@@ -37,7 +37,9 @@ export const EditarLibro = () => {
   // Función para manejar la edición del libro
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!titulo || !autor || cantidad < 1) {
+
+    // Validación de campos
+    if (!titulo.trim() || !autor.trim() || cantidad < 1) {
       alert('Por favor, completa todos los campos correctamente.');
       return;
     }
@@ -46,6 +48,8 @@ export const EditarLibro = () => {
     formData.append('titulo', titulo);
     formData.append('autor', autor);
     formData.append('stock', cantidad);
+
+    // Si hay una nueva imagen seleccionada, se añade a la solicitud
     if (imagen) {
       formData.append('imagen', imagen); // Agrega la nueva imagen si se seleccionó
     }
@@ -121,7 +125,7 @@ export const EditarLibro = () => {
               className="book-image"
             />
           ) : (
-            <p>No hay imagen</p>
+            <p>No hay imagen disponible</p>
           )}
         </div>
         <div className="form-group">

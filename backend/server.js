@@ -13,23 +13,28 @@ if (!fs.existsSync('uploads')) {
     fs.mkdirSync('uploads');
 }
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
-
-// Para servir imágenes
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Configurar almacenamiento de multer
+// Configuración de Multer para solo imágenes
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    }
+    destination: (req, file, cb) => cb(null, 'uploads/'),
+    filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
+
 });
 
-const upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(new Error('Solo se permiten imágenes'), false);
+    }
+};
+
+const upload = multer({ storage, fileFilter });
 
 // Conexión a MySQL
 const pool = mysql.createPool({
@@ -191,7 +196,7 @@ app.delete('/libros/:id', (req, res) => {
 
     const deletePrestamosQuery = `DELETE FROM Prestamo WHERE ISBN = (SELECT ISBN FROM Libro WHERE id = ?)`;
     pool.query(deletePrestamosQuery, [id], (err) => {
-        if (err) return res.status(500).send('Error al eliminar préstamos');
+        if (err) return res.status(500).send('Error al eliminar prÃ©stamos');
 
         const deleteLibroQuery = 'DELETE FROM Libro WHERE id = ?';
         pool.query(deleteLibroQuery, [id], (err, results) => {
