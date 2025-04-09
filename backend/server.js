@@ -117,7 +117,7 @@ app.post('/login-admin', (req, res) => {
 
 app.post('/login-alumno', (req, res) => {
     const { matricula, password } = req.body;
-    const query = 'SELECT * FROM Alumno WHERE matricula = ? AND password = ?';
+    const query = 'SELECT * FROM Alumno WHERE matricula = ? AND contraseña = ?';
     pool.query(query, [matricula, password], (err, results) => {
         if (err) return res.status(500).send('Error en el servidor');
         if (results.length === 0) return res.status(401).send('Credenciales inválidas');
