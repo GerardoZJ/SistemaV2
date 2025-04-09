@@ -11,6 +11,7 @@ export const DevolverLibro = () => {
     const storedMatricula = localStorage.getItem('matricula');
     if (!storedMatricula) {
       alert('Por favor, inicia sesión para ver tus préstamos.');
+      window.location.href = '/login';  // Redirige al login si no hay matrícula
       return;
     }
     setMatricula(storedMatricula);
@@ -23,7 +24,7 @@ export const DevolverLibro = () => {
       if (response.ok) {
         const data = await response.json();
         // Filtrar solo los préstamos pendientes
-        const pendingLoans = data.filter((loan) => !loan.returned);
+        const pendingLoans = data.filter((loan) => loan.returned === 0 || loan.returned === false);
         setLoans(pendingLoans);
       } else {
         console.error('Error al obtener los préstamos:', response.statusText);
@@ -47,13 +48,18 @@ export const DevolverLibro = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ returned: true }),
+        body: JSON.stringify({ returned: true }), // aseguramos que estamos pasando correctamente el campo 'returned'
       });
-
+  
       if (response.ok) {
         alert('Préstamo marcado como devuelto.');
-        // Actualizar la lista de préstamos pendientes
-        setLoans((prevLoans) => prevLoans.filter((loan) => loan.id !== loanId));
+  
+        // Actualizamos el estado para reflejar el cambio inmediatamente en el frontend
+        setLoans((prevLoans) =>
+          prevLoans.map((loan) =>
+            loan.id === loanId ? { ...loan, returned: true } : loan
+          )
+        );
       } else {
         alert('Error al marcar el préstamo como devuelto.');
       }
@@ -61,6 +67,7 @@ export const DevolverLibro = () => {
       console.error('Error al conectar con el servidor:', error);
     }
   };
+  
 
   return (
     <motion.div

@@ -101,7 +101,22 @@ export const SolicitarPrestamo = () => {
       });
 
       if (response.ok) {
+        // Actualizar stock del libro después de registrar el préstamo
+        const updatedBook = { ...selectedBook, stock: selectedBook.stock - cantidadSolicitada };
+        await fetch(`http://localhost:5000/libros/${selectedBook.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ stock: updatedBook.stock }),
+        });
+
         alert('Préstamo registrado exitosamente.');
+        
+        // Redirige a la página de inicio después de la solicitud
+        navigate('/');  // Redirige a Home
+
+        // Resetear el formulario
         setFechaDevolucion('');
         setCantidadSolicitada(1);
         setSelectedBook(null);
@@ -113,6 +128,15 @@ export const SolicitarPrestamo = () => {
       console.error('Error al conectar con el servidor:', error);
       alert('Error al conectar con el servidor.');
     }
+  };
+
+  // Función para obtener la fecha actual en formato adecuado para el campo de fecha
+  const getTodayDate = () => {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Los meses empiezan desde 0
+    const year = today.getFullYear();
+    return `${year}-${month}-${day}`;
   };
 
   return (
@@ -161,6 +185,7 @@ export const SolicitarPrestamo = () => {
             value={fechaDevolucion}
             onChange={(e) => setFechaDevolucion(e.target.value)}
             required
+            min={getTodayDate()} // Se asegura de que la fecha mínima sea la actual
           />
         </div>
 

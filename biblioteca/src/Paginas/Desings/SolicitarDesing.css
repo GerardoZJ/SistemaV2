@@ -172,3 +172,15 @@ button:disabled {
   border-radius: 15px;
   margin-top: 1rem;
 }
+/* Estilo para los campos de Autor, ISBN y Disponibles */
+.book-detail .book-info p {
+  color: #000000; /* Cambiar a negro */
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Para los títulos dentro de la información del libro, como 'Autor' o 'ISBN' */
+.book-detail .book-info h4 {
+  color: #000000; /* Cambiar a negro */
+  font-weight: bold;
+}
